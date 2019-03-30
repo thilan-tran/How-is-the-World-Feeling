@@ -10,6 +10,36 @@ app.use(express.static('public'));
 app.set('view engine', 'ejs');
 
 
+
+router.get('/data/:id', function(req,res){
+let myData = null
+const apiUrl = 'https://us-central1-vision-migration.cloudfunctions.net/la_hacks_2019?market_code=1'
+axios.get(apiUrl)
+  .then(response => {
+    myData = response.data
+    console.log(response.data)
+    response.data.buckets[0].report.rollups.forEach(item => {
+      console.log(item.name);
+    })
+  var array = [];
+  response.data.buckets[0].report.rollups[id].forEach(item => {
+        if(array.indexOf(item) == -1) array.push(item);
+    })
+  res.render('detail', {data: array});
+  console.log(myData)
+  })
+  .catch(error => {
+    console.log(error);
+  })
+//display the specific articles for a trending topic
+
+//display the result of google cloud analysis of this topic.
+
+});
+
+
+
+
 router.get('/',function(req,res){
 const url = 'https://www.thecut.com/2019/03/an-awkward-kiss-changed-how-i-saw-joe-biden.html'
 axios.get(url)
