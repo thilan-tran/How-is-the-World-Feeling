@@ -1,32 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+// const axios = require('axios');
+// const cheerio = require('cheerio');
 
-    <title>Test App</title>
+const app = document.getElementById('root')
+const container = document.createElement('div')
+container.setAttribute('class', 'container')
+app.appendChild(container)
 
-    <link href="https://fonts.googleapis.com/css?family=Dosis:400,700" rel="stylesheet" />
-    <link href="style.css" rel="stylesheet" />
-  </head>
-
-  <body>
-    <div id="root"></div>
-    <h1>TESTING</h1>
-  </body>
-</html>
-
-    <script type="text/javascript">
-    // const axios = require('axios');
-  // const cheerio = require('cheerio');
-
-  const app = document.getElementById('root')
-  const container = document.createElement('div')
-  container.setAttribute('class', 'container')
-  app.appendChild(container)
-
-  var request = new XMLHttpRequest()
-request.open('GET', 'https://cors.io?https://us-central1-vision-migration.cloudfunctions.net/la_hacks_2019?market_code=0', true)
+var request = new XMLHttpRequest()
+request.open('GET', 'https://cors.io?https://us-central1-vision-migration.cloudfunctions.net/la_hacks_2019?market_code=1', true)
 
 request.onload = function () {
   var data = JSON.parse(this.response)
@@ -61,9 +42,3 @@ request.send()
 //   console.log(doc)
 // }
 // request2.send()
-
-    </script>
-    <!-- <script src="script.js" type="text/javascript"></script> -->
-
-  </body>
-</html>

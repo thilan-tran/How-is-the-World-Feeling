@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Test App</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Dosis:400,700" rel="stylesheet" />
+    <link href="/css/style.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <h1>TESTING</h1>
+    <% data.forEach(function(data){ %>
+    <div class="card">
+      <h1><%= data.name %></h1>
+      <a href=<%= Object.keys(data.top_articles_on_network[0]) %>><%= Object.values(data.top_articles_on_network[0]) %></a>
+    </div>
+    <% }) %>
+  </body>
+</html>
+    <!-- <script src="script.js" type="text/javascript"></script> -->
+
+  </body>
+</html>
