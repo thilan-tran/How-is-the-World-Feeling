@@ -12,4 +12,6 @@ fs.readFile('index.html', function (err, html) {
         response.write(html);
         response.end();
     }).listen(PORT);
+
+  console.log('running on 8080');
 });
