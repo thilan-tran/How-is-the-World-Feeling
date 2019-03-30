@@ -1,3 +1,4 @@
+const language = require("@google-cloud/language");
 const express = require("express");
 const app = express();
 const path = require("path");
@@ -5,12 +6,6 @@ const router = express.Router();
 const axios = require("axios");
 const cheerio = require("cheerio");
 console.log("here");
-//Imports the Google Cloud client library
-const language = require('@google-cloud/language');
-
-// Instantiates a client
-const client = new language.LanguageServiceClient();
-
 
 app.use(express.static("public"));
 app.set("view engine", "ejs");
@@ -33,53 +28,55 @@ router.get("/data/:id", function(req, res) {
     });
 
     promises = [];
-    
-    final_results = [];
 
     response.data.buckets[0].report.rollups[
       req.params.id
-    ].top_articles_on_network
-      .forEach(item => {
-        const url = Object.keys(item);
-        promises.push(axios.get(url[0]));
+    ].top_articles_on_network.forEach(item => {
+      const url = Object.keys(item);
+      promises.push(axios.get(url[0]));
+    });
+
+    axios.all(promises).then(results =>
+      results.forEach(response => {
+        const client = new language.LanguageServiceClient();
+        const text = cheerio("p", response.data).text();
+        const document = {
+          content: text,
+          type: "PLAIN_TEXT"
+        };
+        client
+          .analyzeSentiment({ document: document })
+          .then(results => {
+            const sentiment = results[0].documentSentiment;
+
+            console.log(`Text: ${text}`);
+            console.log(`Sentiment score: ${sentiment.score}`);
+            console.log(`Sentiment magnitude: ${sentiment.magnitude}`);
+          })
+          .catch(err => {
+            console.error("ERROR:", err);
+          });
+        // cheerio("p", response.data).text();
       })
-
-      final_results = getStuff(promises);
-      axios.all(promises).then(results => results.forEach( response => {
-            console.log(cheerio("p", response.data).text());
-            // final_results.push(cheerio("p", response.data).text());
-            // cheerio("p", response.data).text();
-            const document = {
-                content: response,
-                type: 'PLAIN_TEXT',
-            };
-            client
-            .analyzeSentiment({document: document})
-            .then(results => {
-                    const sentiment = results[0].documentSentiment;
-
-                    console.log('Text: ${text}');
-                    console.log('Sentiment score: ${sentiment.score}');
-                    console.log('Sentiment magnitude: ${sentiment.magnitude}');
-                    })
-            .catch(err => {
-                    console.error('ERROR:', err);
-                    });
-          }));
-    console.log(final_results);
+    );
     res.render("detail", { data: array });
+    //console.log(myData);
   });
   //display the specific articles for a trending topic
 
   //display the result of google cloud analysis of this topic.
 });
 
-function getStuff(promises){
-      axios.all(promises).then(results => results.forEach( response => {
-            //console.log(cheerio("p", response.data).text());
-            final_results.push(cheerio("p", response.data).text());
-            // cheerio("p", response.data).text();
-          }));
+function getStuff(url) {
+  axios
+    .get(url)
+    .then(response => {
+      //console.log(cheerio("p", response.data).text());
+      return cheerio("p", response.data).text();
+    })
+    .catch(error => {
+      console.log(error);
+    });
 }
 
 router.get("/", function(req, res) {
