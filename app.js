@@ -26,32 +26,39 @@ router.get("/data/:id", function(req, res) {
       if (array.indexOf(item) == -1) array.push(item);
     });
 
+    promises = [];
+    
     response.data.buckets[0].report.rollups[
       req.params.id
     ].top_articles_on_network
       .forEach(item => {
         const url = Object.keys(item);
-        axios
-          .get(url[0])
-          .then(response => {
-            //console.log(response.data);
-            console.log(cheerio("p", response.data).text());
-          })
-          .catch(error => {
-            console.log(error);
-          });
-
-        res.render("detail", { data: array });
-        console.log(myData);
+        promises.push(axios.get(url[0]));
       })
-      .catch(error => {
-        console.log(error);
-      });
+
+      axios.all(promises).then(results => results.forEach( response => {
+            console.log(cheerio("p", response.data).text());
+            // cheerio("p", response.data).text();
+          }));
+    res.render("detail", { data: array });
+     //console.log(myData);
   });
   //display the specific articles for a trending topic
 
   //display the result of google cloud analysis of this topic.
 });
+
+function getStuff(url){
+        axios
+          .get(url)
+          .then(response => {
+            //console.log(cheerio("p", response.data).text());
+            return cheerio("p", response.data).text();
+          })
+          .catch(error => {
+            console.log(error);
+          });
+}
 
 router.get("/", function(req, res) {
   const url =
