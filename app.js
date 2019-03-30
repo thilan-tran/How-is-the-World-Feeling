@@ -5,6 +5,12 @@ const router = express.Router();
 const axios = require("axios");
 const cheerio = require("cheerio");
 console.log("here");
+//Imports the Google Cloud client library
+const language = require('@google-cloud/language');
+
+// Instantiates a client
+const client = new language.LanguageServiceClient();
+
 
 app.use(express.static("public"));
 app.set("view engine", "ejs");
@@ -28,6 +34,8 @@ router.get("/data/:id", function(req, res) {
 
     promises = [];
     
+    final_results = [];
+
     response.data.buckets[0].report.rollups[
       req.params.id
     ].top_articles_on_network
@@ -36,28 +44,42 @@ router.get("/data/:id", function(req, res) {
         promises.push(axios.get(url[0]));
       })
 
+      final_results = getStuff(promises);
       axios.all(promises).then(results => results.forEach( response => {
             console.log(cheerio("p", response.data).text());
+            // final_results.push(cheerio("p", response.data).text());
             // cheerio("p", response.data).text();
+            const document = {
+                content: response,
+                type: 'PLAIN_TEXT',
+            };
+            client
+            .analyzeSentiment({document: document})
+            .then(results => {
+                    const sentiment = results[0].documentSentiment;
+
+                    console.log('Text: ${text}');
+                    console.log('Sentiment score: ${sentiment.score}');
+                    console.log('Sentiment magnitude: ${sentiment.magnitude}');
+                    })
+            .catch(err => {
+                    console.error('ERROR:', err);
+                    });
           }));
+    console.log(final_results);
     res.render("detail", { data: array });
-     //console.log(myData);
   });
   //display the specific articles for a trending topic
 
   //display the result of google cloud analysis of this topic.
 });
 
-function getStuff(url){
-        axios
-          .get(url)
-          .then(response => {
+function getStuff(promises){
+      axios.all(promises).then(results => results.forEach( response => {
             //console.log(cheerio("p", response.data).text());
-            return cheerio("p", response.data).text();
-          })
-          .catch(error => {
-            console.log(error);
-          });
+            final_results.push(cheerio("p", response.data).text());
+            // cheerio("p", response.data).text();
+          }));
 }
 
 router.get("/", function(req, res) {
