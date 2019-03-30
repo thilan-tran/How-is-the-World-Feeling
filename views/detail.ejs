@@ -14,15 +14,12 @@
     <div id="root"></div>
     <h1>How is the World feeling today?</h1>
     <div class="container">
-    <% data.forEach(function(data){ %>
     <div class="card">
-      <h1><%= data.name %></h1>
-      <% data.top_articles_on_network.forEach(function(element){ %>
+      <% data.forEach(function(element){ %>
           <a href=<%= Object.keys(element) %>><%= Object.values(element) %></a>
           <br>
       <% }) %>
     </div>
-    <% }) %>
     </div>
   </body>
 </html>
