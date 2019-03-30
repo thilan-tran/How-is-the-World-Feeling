@@ -22,9 +22,9 @@ axios.get(apiUrl)
       console.log(item.name);
     })
   var array = [];
-  response.data.buckets[0].report.rollups[id].forEach(item => {
+  response.data.buckets[0].report.rollups[req.params.id].top_articles_on_network.forEach(item => {
         if(array.indexOf(item) == -1) array.push(item);
-    })
+    });
   res.render('detail', {data: array});
   console.log(myData)
   })
