@@ -12,13 +12,18 @@
 
   <body>
     <div id="root"></div>
-    <h1>TESTING</h1>
+    <h1>How is the World feeling today?</h1>
+    <div class="container">
     <% data.forEach(function(data){ %>
     <div class="card">
       <h1><%= data.name %></h1>
-      <a href=<%= Object.keys(data.top_articles_on_network[0]) %>><%= Object.values(data.top_articles_on_network[0]) %></a>
+      <% data.top_articles_on_network.forEach(function(element){ %>
+          <a href=<%= Object.keys(element) %>><%= Object.values(element) %></a>
+          <br>
+      <% }) %>
     </div>
     <% }) %>
+    </div>
   </body>
 </html>
     <!-- <script src="script.js" type="text/javascript"></script> -->
