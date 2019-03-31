@@ -34,6 +34,7 @@ router.get("/:p/data/:id", function(req, res) {
     promises = [];
     sa_promises = [];
     e_promises = [];
+    se_promises = [];
 
     response.data.buckets[0].report.rollups[
       req.params.id
@@ -44,8 +45,7 @@ router.get("/:p/data/:id", function(req, res) {
     });
     
     console.log("creating analysis arrays");
-    axios.all(promises).then(results =>
-      { 
+    axios.all(promises).then(results => { 
         results.forEach(response => {
         const client = new language.LanguageServiceClient();
         const text = cheerio("p", response.data).text();
@@ -55,11 +55,12 @@ router.get("/:p/data/:id", function(req, res) {
         };
         sa_promises.push(client.analyzeSentiment({ document: document }));
         e_promises.push(client.analyzeEntities({document}));
+        se_promises.push(client.analyzeEntitySentiment({document: document}));
         })
       getStuff(sa_promises);
       getMoreStuff(e_promises);
-      }
-      );
+      getEvenMoreStuff(se_promises);
+    });
       
     res.render("detail", { data: array, loc: LOCATION[req.params.p], l: req.params.p});
     //console.log(myData);
@@ -93,7 +94,6 @@ function getMoreStuff(e_promises) {
     console.log("about to execute entity analysis");
     Promise.all(e_promises).then(allResults => {
         console.log("performing entity analysis for " + allResults.length);
-        console.log(allResults[0][0]);
         allResults.forEach(resultArr => {
             const entities = resultArr[0].entities;
             var l = entities.length > 10 ? 10 : entities.length;
@@ -102,7 +102,6 @@ function getMoreStuff(e_promises) {
                 console.log(entity.name);
                 console.log(entity.type);
                 console.log(entity.salience);
-                console.log(entity.metadata.wikipedia_url);
             };
             console.log("finished a website!");
         });
@@ -113,6 +112,28 @@ function getMoreStuff(e_promises) {
         });
 }
 
+function getEvenMoreStuff(se_promises) {
+    console.log("about to execute sentiment entity analysis");
+    Promise.all(se_promises).then(allResults => {
+        console.log("sentiment entity analysis for " + allResults.length);
+        allResults.forEach(resultArr => {
+            const entities = resultArr[0].entities;
+            var l = entities.length > 10 ? 10 : entities.length;
+            for(var i = 0; i < l; i++){
+                var entity = entities[i];
+                console.log(entity.name);
+                console.log(entity.type);
+                console.log(entity.sentiment.score);
+                console.log(entity.sentiment.magnitude);
+            };
+            console.log("finished a website!");
+        });
+        return allResults;
+        })
+    .catch(err => {
+        console.error("ERROR:", err);
+        });
+}
 
 router.get("/:id?", function(req, res) {
   const url =
