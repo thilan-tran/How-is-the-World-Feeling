@@ -50,7 +50,7 @@ router.get("/data/:id", function(req, res) {
           .then(results => {
             const sentiment = results[0].documentSentiment;
 
-            console.log(`Text: ${text}`);
+            // console.log(`Text: ${text}`);
             console.log(`Sentiment score: ${sentiment.score}`);
             console.log(`Sentiment magnitude: ${sentiment.magnitude}`);
           })
