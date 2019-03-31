@@ -15,7 +15,7 @@ router.get("/:p/data/:id", function(req, res) {
   let myData = null;
   let apiUrl =
     "https://us-central1-vision-migration.cloudfunctions.net/la_hacks_2019?market_code=";
-  
+
   apiUrl+=req.params.p;
   axios.get(apiUrl).then(response => {
     myData = response.data;
@@ -62,7 +62,7 @@ router.get("/:p/data/:id", function(req, res) {
           });
         // cheerio("p", response.data).text();
       })
-    ).then(console.log("The average feeling is good");
+    ).then(console.log("The average feeling is good"));
     res.render("detail", { data: array, loc:loc});
     //console.log(myData);
   });
