@@ -63,7 +63,7 @@ router.get("/:p/data/:id", function(req, res) {
         // cheerio("p", response.data).text();
       })
     ).then(console.log("The average feeling is good"));
-    res.render("detail", { data: array, loc:LOCATION[loc], l:req.params.p});
+    res.render("detail", { data: array, loc: LOCATION[req.params.p], l: req.params.p});
     //console.log(myData);
   });
   //display the specific articles for a trending topic
