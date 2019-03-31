@@ -6,37 +6,21 @@
 
     <title>Test App</title>
 
-    <!-- <link href="https://fonts.googleapis.com/css?family=Dosis:400,700" rel="stylesheet" /> -->
-    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
+    <link href="https://fonts.googleapis.com/css?family=Dosis:400,700" rel="stylesheet" />
     <link href="/css/style.css" rel="stylesheet" />
   </head>
 
   <body>
-    <ul>
-      <li><a class="nav" href="/0">United States</a></li>
-      <li><a class="nav" href="/1">Great Britain</a></li>
-      <li><a class="nav" href="/2">India</a></li>
-      <li><a class="nav" href="/3">Australia</a></li>
-      <li><a class="nav" href="/4">Israel</a></li>
-      <li><a class="nav" href="/5">Germany</a></li>
-      <li><a class="nav" href="/6">Mexico</a></li>
-      <li><a class="nav" href="/7">Japan</a></li>
-      <li><a class="nav" href="/8">Korea</a></li>
-      <li><a class="nav" href="/9">France</a></li>
-    </ul>
     <div id="root"></div>
     <h1>How is <%= loc %> feeling today?</h1>
-    <h2> <%= avg %> </h2>
-    <h2>Articles:</h2>
-    <!-- <div class="container"> -->
-    <div class="article-container">
-      <% data.forEach(function(element){ %>
+    <div class="container">
     <div class="card">
-      <h1><a class="links" href=<%= Object.keys(element) %>><%= Object.values(element).toString().substring(0,110) %>...</a></h1>
-    </div>
+      <% data.forEach(function(element){ %>
+          <a href=<%= Object.keys(element) %>><%= Object.values(element) %></a>
+          <br>
       <% }) %>
     </div>
-    <!-- </div> -->
+    </div>
   </body>
 </html>
     <!-- <script src="script.js" type="text/javascript"></script> -->
