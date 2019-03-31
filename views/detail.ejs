@@ -34,10 +34,21 @@
     <div class="dropdown">
       <button class= "dropbtn"><a href=<%= Object.keys(element) %>><%= Object.values(element).toString().substring(0,110) %>...</a></button>
       <div class="dropdown-content">
-      <ul>
-        <li>"hello"</li>
-        <li>"world</li>
-      </ul>
+          <table> 
+            <tr> 
+              <th>Entities</th> 
+              <th>Sentiment</th> 
+              <th>Salience</th> 
+            </tr> 
+            <tr> 
+              <td>Bob</td> 
+              <td>Yellow</td> 
+            </tr> 
+            <tr> 
+              <td>Michelle</td> 
+              <td>Purple</td> 
+            </tr> 
+          </table>
       </div>
     </div>
       <% }) %>
