@@ -99,9 +99,9 @@ function getMoreStuff(e_promises) {
             var l = entities.length > 10 ? 10 : entities.length;
             for(var i = 0; i < l; i++){
                 var entity = entities[i];
-                console.log(entity.name);
-                console.log(entity.type);
-                console.log(entity.salience);
+                console.log("Entity name: " + entity.name);
+                console.log("Entity type: " + entity.type);
+                console.log("Entity Salience: " + entity.salience);
             };
             console.log("finished a website!");
         });
@@ -121,10 +121,10 @@ function getEvenMoreStuff(se_promises) {
             var l = entities.length > 10 ? 10 : entities.length;
             for(var i = 0; i < l; i++){
                 var entity = entities[i];
-                console.log(entity.name);
-                console.log(entity.type);
-                console.log(entity.sentiment.score);
-                console.log(entity.sentiment.magnitude);
+                console.log("Entity name: " + entity.name);
+                console.log("Entity type: " + entity.type);
+                console.log("Sentiment score: " + entity.sentiment.score);
+                console.log("Sentiment magnitude: "+entity.sentiment.magnitude);
             };
             console.log("finished a website!");
         });
