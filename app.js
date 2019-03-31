@@ -79,7 +79,7 @@ function getStuff(url) {
     });
 }
 
-router.get("/", function(req, res) {
+router.get("/:id?", function(req, res) {
   const url =
     "https://www.thecut.com/2019/03/an-awkward-kiss-changed-how-i-saw-joe-biden.html";
   axios
@@ -108,8 +108,12 @@ router.get("/", function(req, res) {
   // <!-- <% }) %> -->
   // request.open('GET', 'https://cors.io?https://us-central1-vision-migration.cloudfunctions.net/la_hacks_2019?market_code=0', true)
   let myData = null;
-  const apiUrl =
-    "https://us-central1-vision-migration.cloudfunctions.net/la_hacks_2019?market_code=1";
+  let apiUrl =
+    "https://us-central1-vision-migration.cloudfunctions.net/la_hacks_2019?market_code=";
+if(req.params.id != null)
+    apiUrl+=req.params.id;
+else
+    apiUrl+=0;
   axios
     .get(apiUrl)
     .then(response => {
