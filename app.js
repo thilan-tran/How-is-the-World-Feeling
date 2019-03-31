@@ -109,10 +109,13 @@ router.get("/:id?", function(req, res) {
   // <!-- <% }) %> -->
   // request.open('GET', 'https://cors.io?https://us-central1-vision-migration.cloudfunctions.net/la_hacks_2019?market_code=0', true)
   let myData = null;
+  var locate = 0;
   let apiUrl =
     "https://us-central1-vision-migration.cloudfunctions.net/la_hacks_2019?market_code=";
-    if(req.params.id != null)
+    if(req.params.id != null){
         apiUrl+=req.params.id;
+        locate = req.params.id;
+    }
     else
         apiUrl+=0;
   axios
@@ -123,7 +126,7 @@ router.get("/:id?", function(req, res) {
       response.data.buckets[0].report.rollups.forEach(item => {
         console.log(item.name);
       });
-      res.render("index", { data: response.data.buckets[0].report.rollups });
+      res.render("index", { data: response.data.buckets[0].report.rollups, loc: response.data.views[locate]});
       console.log(myData);
     })
     .catch(error => {
