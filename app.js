@@ -33,6 +33,7 @@ router.get("/:p/data/:id", function(req, res) {
     var loc = response.data.views[req.params.p];
     promises = [];
     sa_promises = [];
+    e_promises = [];
 
     response.data.buckets[0].report.rollups[
       req.params.id
@@ -55,8 +56,10 @@ router.get("/:p/data/:id", function(req, res) {
         };
         console.log("creating analysis array");
         sa_promises.push(client.analyzeSentiment({ document: document }));
+        e_promises.push(client.analyzeEntities({document}));
         })
       getStuff(sa_promises);
+      getMoreStuff(e_promises);
       }
       );
       
@@ -80,13 +83,37 @@ function getStuff(sa_promises) {
             console.log(`Sentiment score: ${sentiment.score}`);
             console.log(`Sentiment magnitude: ${sentiment.magnitude}`);                   
             });
-        console.log("Feel good!");
+        console.log("average: "+ total/counter);
         return allResults;
         })
     .catch(err => {
         console.error("ERROR:", err);
         });
 }
+
+function getMoreStuff(e_promises) {
+    console.log("about to execute entity analysis");
+    Promise.all(sa_promises).then(allResults => {
+        var total = 0, counter = 0;
+        console.log("performing entity analysis for " + allResults.length);
+        console.log(allResults);
+        allResults.forEach(resultArr => {
+            const entities = resultArr.entities;
+            entities.forEach(entity => {
+                console.log(entity.name);
+                console.log(entity.type);
+                console.log(entity.salience);
+                console.log(entity.metadata.wikipedia_url);
+            });
+        });
+        console.log("average: "+ total/counter);
+        return allResults;
+        })
+    .catch(err => {
+        console.error("ERROR:", err);
+        });
+}
+
 
 router.get("/:id?", function(req, res) {
   const url =
