@@ -44,7 +44,8 @@ router.get("/:p/data/:id", function(req, res) {
     
     console.log("about to start executing axios");
     axios.all(promises).then(results =>
-      results.forEach(response => {
+      { 
+        results.forEach(response => {
         console.log("executing axios");
         const client = new language.LanguageServiceClient();
         const text = cheerio("p", response.data).text();
@@ -54,8 +55,20 @@ router.get("/:p/data/:id", function(req, res) {
         };
         console.log("creating analysis array");
         sa_promises.push(client.analyzeSentiment({ document: document }));
-        }));
-    
+        })
+      getStuff(sa_promises);
+      }
+      );
+      
+    res.render("detail", { data: array, loc: LOCATION[req.params.p], l: req.params.p});
+    //console.log(myData);
+  });
+  //display the specific articles for a trending topic
+
+  //display the result of google cloud analysis of this topic.
+});
+
+function getStuff(sa_promises) {
     console.log("about to execute sa analysis");
     Promise.all(sa_promises).then(allResults => {
         var total = 0, counter = 0;
@@ -68,28 +81,11 @@ router.get("/:p/data/:id", function(req, res) {
             console.log(`Sentiment magnitude: ${sentiment.magnitude}`);                   
             });
         console.log("Feel good!");
+        return allResults;
         })
     .catch(err => {
         console.error("ERROR:", err);
         });
-    res.render("detail", { data: array, loc: LOCATION[req.params.p], l: req.params.p});
-    //console.log(myData);
-  });
-  //display the specific articles for a trending topic
-
-  //display the result of google cloud analysis of this topic.
-});
-
-function getStuff(url) {
-  axios
-    .get(url)
-    .then(response => {
-      //console.log(cheerio("p", response.data).text());
-      return cheerio("p", response.data).text();
-    })
-    .catch(error => {
-      console.log(error);
-    });
 }
 
 router.get("/:id?", function(req, res) {
