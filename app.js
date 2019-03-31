@@ -5,15 +5,18 @@ const path = require("path");
 const router = express.Router();
 const axios = require("axios");
 const cheerio = require("cheerio");
+const LOCATION=["The United States", "Great Britain", "India", "Australia", "Israel", "Germany", "Mexico", "Japan", "Korea", "France"];
 console.log("here");
 
 app.use(express.static("public"));
 app.set("view engine", "ejs");
 
-router.get("/data/:id", function(req, res) {
+router.get("/:p/data/:id", function(req, res) {
   let myData = null;
-  const apiUrl =
-    "https://us-central1-vision-migration.cloudfunctions.net/la_hacks_2019?market_code=1";
+  let apiUrl =
+    "https://us-central1-vision-migration.cloudfunctions.net/la_hacks_2019?market_code=";
+  
+  apiUrl+=req.params.p;
   axios.get(apiUrl).then(response => {
     myData = response.data;
     console.log(response.data);
@@ -27,7 +30,7 @@ router.get("/data/:id", function(req, res) {
       if ( array.findIndex(obj => Object.values(obj).toString() == Object.values(item).toString()) == -1)
         array.push(item);
     });
-
+    var loc = response.data.views[req.params.p];
     promises = [];
 
     response.data.buckets[0].report.rollups[
@@ -59,8 +62,8 @@ router.get("/data/:id", function(req, res) {
           });
         // cheerio("p", response.data).text();
       })
-    ).then(console.log("hello worldddddddddddddddd"));
-    res.render("detail", { data: array });
+    ).then(console.log("The average feeling is good");
+    res.render("detail", { data: array, loc:loc});
     //console.log(myData);
   });
   //display the specific articles for a trending topic
@@ -126,7 +129,7 @@ router.get("/:id?", function(req, res) {
       response.data.buckets[0].report.rollups.forEach(item => {
         console.log(item.name);
       });
-      res.render("index", { data: response.data.buckets[0].report.rollups, loc: response.data.views[locate]});
+      res.render("index", { data: response.data.buckets[0].report.rollups, loc: LOCATION[locate], l:locate});
       console.log(myData);
     })
     .catch(error => {
