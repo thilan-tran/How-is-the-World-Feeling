@@ -27,42 +27,51 @@ router.get("/:p/data/:id", function(req, res) {
     response.data.buckets[0].report.rollups[
       req.params.id
     ].top_articles_on_network.forEach(item => {
-      if ( array.findIndex(obj => Object.values(obj).toString() == Object.values(item).toString()) == -1)
+      if (array.findIndex(obj => Object.values(obj).toString() == Object.values(item).toString()) == -1)
         array.push(item);
     });
     var loc = response.data.views[req.params.p];
     promises = [];
+    sa_promises = [];
 
     response.data.buckets[0].report.rollups[
       req.params.id
     ].top_articles_on_network.forEach(item => {
       const url = Object.keys(item);
       promises.push(axios.get(url[0]));
+      console.log("creating url array");
     });
-
+    
+    console.log("about to start executing axios");
     axios.all(promises).then(results =>
       results.forEach(response => {
+        console.log("executing axios");
         const client = new language.LanguageServiceClient();
         const text = cheerio("p", response.data).text();
         const document = {
           content: text,
           type: "PLAIN_TEXT"
         };
-        client
-          .analyzeSentiment({ document: document })
-          .then(results => {
-            const sentiment = results[0].documentSentiment;
-
-            console.log(`Text: ${text}`);
+        console.log("creating analysis array");
+        sa_promises.push(client.analyzeSentiment({ document: document }));
+        }));
+    
+    console.log("about to execute sa analysis");
+    Promise.all(sa_promises).then(allResults => {
+        var total = 0, counter = 0;
+        console.log("executing analysis array of size: " + allResults.length);
+        allResults.forEach(resultArr => {
+            const sentiment = resultArr[0].documentSentiment;
+            total += sentiment.score;
+            counter++;
             console.log(`Sentiment score: ${sentiment.score}`);
-            console.log(`Sentiment magnitude: ${sentiment.magnitude}`);
-          })
-          .catch(err => {
-            console.error("ERROR:", err);
-          });
-        // cheerio("p", response.data).text();
-      })
-    ).then(console.log("The average feeling is good"));
+            console.log(`Sentiment magnitude: ${sentiment.magnitude}`);                   
+            });
+        console.log("Feel good!");
+        })
+    .catch(err => {
+        console.error("ERROR:", err);
+        });
     res.render("detail", { data: array, loc: LOCATION[req.params.p], l: req.params.p});
     //console.log(myData);
   });
