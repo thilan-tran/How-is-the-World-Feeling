@@ -68,7 +68,10 @@ router.get("/:p/data/:id", function(req, res) {
         e_promises.push(client.analyzeEntities({ document }));
         se_promises.push(client.analyzeEntitySentiment({ document: document }));
       });
-      var resObject = {data:array, loc:LOCATION[req.params.p], l:req.params.p};
+      var resObject = {data:array, loc:LOCATION[req.params.p], l:req.params.p,
+          name: response.data.buckets[0].report.rollups[req.params.id].name};
+      resObject.name=resObject.name.charAt(0).toUpperCase() + 
+                     resObject.name.slice(1);
       doAllTheWork(sa_promises, e_promises, se_promises, res, resObject);
     }).catch((error)=>console.log(error));
 
@@ -81,9 +84,10 @@ function doAllTheWork(sa_promises, e_promises, se_promises, res, resObject){
       getMoreStuff(e_promises,res,resObject, data).then((moreData)=>{
         getEvenMoreStuff(se_promises,res,resObject, moreData).then((evenMoreData)=>{
           var object = makeStuffCoherent(evenMoreData);
-          var complete = {data:evenMoreData.data, loc:evenMoreData.loc, 
-                          l:evenMoreData.l, avg:evenMoreData.avg, entities:object};
-          console.log(complete);
+          var complete = {name:evenMoreData.name, data:evenMoreData.data, 
+                          loc:evenMoreData.loc, l:evenMoreData.l, 
+                          avg:evenMoreData.avg, entities:object, 
+                          emotion:evenMoreData.emotion};
           res.render("detail", complete);
         });
       })
@@ -105,8 +109,11 @@ function getStuff(sa_promises, res, resObject) {
         console.log(`Sentiment magnitude: ${sentiment.magnitude}`);
       });
       var sentiment = (total/counter).toFixed(3);
+      var myEmotion = sentiment > 0.1 ? "positive" 
+                      : sentiment < -0.1 ? "negative" : "neutral";
       console.log("average: " + total / counter);
-      var data = Object.assign(resObject, {"avg":sentiment});
+      var data = Object.assign(resObject, {"avg":sentiment, 
+              emotion:myEmotion});
       return data;
     })
     .catch(err => {
@@ -123,16 +130,13 @@ function getMoreStuff(e_promises, res, resObject, data) {
       allResults.forEach(resultArr => {
         const entities = resultArr[0].entities;
         var website = [];
-        var l = entities.length > 10 ? 10 : entities.length;
+        var l = entities.length > 10? 10: entities.length;
         for (var i = 0; i < l; i++) {
           var entity = entities[i];
-          console.log("Entity name: " + entity.name);
-          console.log("Entity type: " + entity.type);
-          console.log("Entity Salience: " + entity.salience);
           var myEntity = {
             name: entity.name,
             type: entity.type,
-            salience: entity.salience
+            salience: entity.salience.toFixed(2)
           };
           website.push(myEntity);
         }
@@ -156,23 +160,19 @@ function getEvenMoreStuff(se_promises, res, resObject, moreData) {
       allResults.forEach(resultArr => {
         const entities = resultArr[0].entities;
         var website = [];
-        var l = entities.length > 10 ? 10 : entities.length;
+        var l = entities.length > 10? 10: entities.length;
         for (var i = 0; i < l; i++) {
           var entity = entities[i];
-          console.log("Entity name: " + entity.name);
-          console.log("Entity type: " + entity.type);
-          console.log("Sentiment score: " + entity.sentiment.score);
-          console.log("Sentiment magnitude: " + entity.sentiment.magnitude);
           var myEntity = {
             name: entity.name,
             type: entity.type,
-            score: entity.sentiment.score,
-            magnitude: entity.sentiment.magnitude
+            score: entity.sentiment.score.toFixed(2),
+            magnitude: entity.sentiment.magnitude.toFixed(2)
           };
           website.push(myEntity);
         }
         array.push(website);
-        console.log("finished a website!");
+        console.log("finished website");
       });
       var evenMoreData = Object.assign(moreData, {"entitySentiment":array});
       return evenMoreData;
