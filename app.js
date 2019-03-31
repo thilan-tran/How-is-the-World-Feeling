@@ -68,30 +68,31 @@ router.get("/:p/data/:id", function(req, res) {
         e_promises.push(client.analyzeEntities({ document }));
         se_promises.push(client.analyzeEntitySentiment({ document: document }));
       });
-      var sentiment = getStuff(sa_promises, res, 
-          {data:array, loc:LOCATION[req.params.p], l:req.params.p});
-      var entity = getMoreStuff(e_promises);
-      var entitysentiment = getEvenMoreStuff(se_promises);
-  //    console.log("cleaning up the output");
-//      var data = makeStuffCoherent(entity, entitysentiment);
-      /* res.render("detail", {
-        data: array,
-        avg: sentiment,
-        loc: LOCATION[req.params.p],
-        l: req.params.p
-      }); */
-    });
+      var resObject = {data:array, loc:LOCATION[req.params.p], l:req.params.p};
+      doAllTheWork(sa_promises, e_promises, se_promises, res, resObject);
+    }).catch((error)=>console.log(error));
 
-    //console.log(myData);
-  });
-  //display the specific articles for a trending topic
-
-  //display the result of google cloud analysis of this topic.
+  })
+  .catch((error)=>console.log(error));
 });
+
+function doAllTheWork(sa_promises, e_promises, se_promises, res, resObject){
+    getStuff(sa_promises,res,resObject).then((data)=>{
+      getMoreStuff(e_promises,res,resObject, data).then((moreData)=>{
+        getEvenMoreStuff(se_promises,res,resObject, moreData).then((evenMoreData)=>{
+          var object = makeStuffCoherent(evenMoreData);
+          var complete = {data:evenMoreData.data, loc:evenMoreData.loc, 
+                          l:evenMoreData.l, avg:evenMoreData.avg, entities:object};
+          console.log(complete);
+          res.render("detail", complete);
+        });
+      })
+    }); 
+}
 
 function getStuff(sa_promises, res, resObject) {
   console.log("about to execute sa analysis");
-  Promise.all(sa_promises)
+  return Promise.all(sa_promises)
     .then(allResults => {
       var total = 0,
         counter = 0;
@@ -105,18 +106,18 @@ function getStuff(sa_promises, res, resObject) {
       });
       var sentiment = (total/counter).toFixed(3);
       console.log("average: " + total / counter);
-      res.render("detail", Object.assign(resObject, { avg: sentiment }));
-      return sentiment;
+      var data = Object.assign(resObject, {"avg":sentiment});
+      return data;
     })
     .catch(err => {
       console.error("ERROR:", err);
     });
 }
 
-function getMoreStuff(e_promises) {
+function getMoreStuff(e_promises, res, resObject, data) {
   console.log("about to execute entity analysis");
   var array = [];
-  Promise.all(e_promises)
+  return Promise.all(e_promises)
     .then(allResults => {
       console.log("performing entity analysis for " + allResults.length);
       allResults.forEach(resultArr => {
@@ -138,17 +139,18 @@ function getMoreStuff(e_promises) {
         array.push(website);
         console.log("finished a website!");
       });
-      return array;
+      var moreData = Object.assign(data, {"entity":array});
+      return moreData;
     })
     .catch(err => {
       console.error("ERROR:", err);
     });
 }
 
-function getEvenMoreStuff(se_promises) {
+function getEvenMoreStuff(se_promises, res, resObject, moreData) {
   console.log("about to execute sentiment entity analysis");
   var array = [];
-  Promise.all(se_promises)
+  return Promise.all(se_promises)
     .then(allResults => {
       console.log("sentiment entity analysis for " + allResults.length);
       allResults.forEach(resultArr => {
@@ -172,30 +174,31 @@ function getEvenMoreStuff(se_promises) {
         array.push(website);
         console.log("finished a website!");
       });
-      return array;
+      var evenMoreData = Object.assign(moreData, {"entitySentiment":array});
+      return evenMoreData;
     })
     .catch(err => {
       console.error("ERROR:", err);
     });
 }
 
-function makeStuffCoherent(entity, entitysentiment) {
+function makeStuffCoherent(data) {
+  var entity = data.entity;
+  var entitysentiment = data.entitySentiment;
   if (entity.length != entitysentiment.length)
     console.log("oopsies! your arrays are not of the same size.");
-  return;
-  var data = [];
+  var object = [];
   for (var i = 0; i < entity.length; i++) {
     if (entity[i].length != entitysentiment[i].length)
       console.log("oopsies! your arrays are not of the same size.");
     var website = [];
     for (var j = 0; j < entity[i].length; j++){
-      var object = Object.assign(entity[i][j], entitysentiment[i][j]);
-      website.push(object);
+      var temp = Object.assign(entity[i][j], entitysentiment[i][j]);
+      website.push(temp);
     }
-    data.push(website);
+    object.push(website);
   }
-  console.log(data.length == entity.length);
-  return data;
+  return object;
 }
 
 router.get("/:id?", function(req, res) {
