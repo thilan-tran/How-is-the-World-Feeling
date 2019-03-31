@@ -31,8 +31,14 @@
     <!-- <div class="container"> -->
     <div class="article-container">
       <% data.forEach(function(element){ %>
-    <div class="card">
-      <h1><a class="links" href=<%= Object.keys(element) %>><%= Object.values(element).toString().substring(0,110) %>...</a></h1>
+    <div class="dropdown">
+      <button class= "dropbtn"><a href=<%= Object.keys(element) %>><%= Object.values(element).toString().substring(0,110) %>...</a></button>
+      <div class="dropdown-content">
+      <ul>
+        <li>"hello"</li>
+        <li>"world</li>
+      </ul>
+      </div>
     </div>
       <% }) %>
     </div>
