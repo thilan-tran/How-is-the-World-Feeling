@@ -5,7 +5,7 @@ const path = require("path");
 const router = express.Router();
 const axios = require("axios");
 const cheerio = require("cheerio");
-const LOCATION=["The United States", "Great Britain", "India", "Australia", "Israel", "Germany", "Mexico", "Japan", "Korea", "France"];
+const LOCATION=["the United States", "Great Britain", "India", "Australia", "Israel", "Germany", "Mexico", "Japan", "Korea", "France"];
 console.log("here");
 
 app.use(express.static("public"));
