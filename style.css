@@ -1,26 +1,147 @@
+body {
+  /* font-family: 'Karla', sans-serif; */
+  font-family: "Open Sans", sans-serif;
+  background-color: #5dade2;
+}
+
 #root {
+  /* font-family: Arial; */
   max-width: 1200px;
   margin: 0 auto;
 }
 
+h1,
+h2 {
+  /* font-size: 15px; */
+  text-align: center;
+  color: #e5e7e9;
+}
+
+h2 {
+  margin: 0 auto;
+  width: 80%;
+  text-align: left;
+}
+
 .container {
+  margin: 0 auto;
+  width: 80%;
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
+}
+
+.article-container {
+  margin: 0 auto;
+  width: 80%;
+  display: flex;
+  flex-wrap: wrap;
+  flex-basis: 90px;
 }
 
 .card {
+  /* height: 100 px; */
+  /* background-color: white; */
+  text-align: center;
+  /* font-family: Arial; */
   margin: 1rem;
-  border: 1px solid gray;
+  margin-bottom: -1rem;
+  font-size: 10px;
 }
 
 @media screen and (min-width: 600px) {
   .card {
-    flex: 1 1 calc(50% - 2rem);
+    flex: 1 1 calc(10% - 2rem);
   }
 }
 
 @media screen and (min-width: 900px) {
   .card {
-    flex: 1 1 calc(33% - 2rem);
+    flex: 1 1 calc(10% - 2rem);
   }
+}
+
+a:link,
+a:visited {
+  /* background-color: white; */
+  /* color: black; */
+  padding: 14px 25px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border: 2px solid #333;
+  border-radius: 10px;
+}
+a:link,
+a:visited {
+  /* color: black; */
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+  border-radius: 10px;
+  color: white;
+  text-color: white;
+}
+
+li {
+  float: left;
+  color: white;
+}
+
+li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+.nav a {
+  color: white;
+  border: none;
+}
+
+/* Change the link color to #111 (black) on hover */
+li a:hover {
+  background-color: #111;
+}
+
+.card a:visited:not(:hover),
+.card a:link:not(:hover) {
+  color: black;
+  background-color: #f4d03f;
+  box-shadow: 0 5px #999;
+  /* font-size: 25px; */
+  transition: color 0.3s ease-in-out;
+  transition: background-color 0.3s ease-in-out;
+  /* transition: font-size .4s ease-in-out; */
+  /* border: 2px solid grey; */
+}
+
+.card a:hover {
+  box-shadow: 0 5px #999;
+  /* transition: font-size .4s ease-in-out; */
+  /* font-size: 30px; */
+  transition: color 0.3s ease-in-out;
+  transition: background-color 0.3s ease-in-out;
+  background-color: #707b7c;
+  color: #f4d03f;
+}
+.card a:active {
+  box-shadow: 0 5px #666;
+  transform: translateY(3px);
+}
+
+.active {
+  background-color: blue;
+}
+
+.links {
+  font-size: 13px;
+  flex-basis: 90px;
 }

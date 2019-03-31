@@ -6,14 +6,28 @@
 
     <title>Test App</title>
 
-    <link href="https://fonts.googleapis.com/css?family=Dosis:400,700" rel="stylesheet" />
+    <!-- <link href="https://fonts.googleapis.com/css?family=Dosis:400,700" rel="stylesheet" /> -->
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
+    <!-- <link href="https://fonts.googleapis.com/css?family=Karla" rel="stylesheet"> -->
     <link href="/css/style.css" rel="stylesheet" />
   </head>
 
   <body>
+    <ul>
+      <li><a class="nav" href="/0">United States</a></li>
+      <li><a class="nav" href="/1">Great Britain</a></li>
+      <li><a class="nav" href="/2">India</a></li>
+      <li><a class="nav" href="/3">Australia</a></li>
+      <li><a class="nav" href="/4">Israel</a></li>
+      <li><a class="nav" href="/5">Germany</a></li>
+      <li><a class="nav" href="/6">Mexico</a></li>
+      <li><a class="nav" href="/7">Japan</a></li>
+      <li><a class="nav" href="/8">Korea</a></li>
+      <li><a class="nav" href="/9">France</a></li>
+    </ul>
     <div id="root"></div>
     <h1>How is <%= loc %> feeling today?</h1>
-    <h2>Click on a trending topic...</h2>
+    <h2>Click on a trending topic to get an emotional estimate...</h2>
     <div class="container">
       <% for (var i = 0; i < data.length; i++) { %>
     <div class="card">
