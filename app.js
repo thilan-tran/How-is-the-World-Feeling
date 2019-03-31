@@ -92,17 +92,19 @@ function getStuff(sa_promises) {
 function getMoreStuff(e_promises) {
     console.log("about to execute entity analysis");
     Promise.all(e_promises).then(allResults => {
-        console.log(allResults);
         console.log("performing entity analysis for " + allResults.length);
+        console.log(allResults[0][0]);
         allResults.forEach(resultArr => {
-            const entities = resultArr.entities;
-            console.log(entities);
-            entities.forEach(entity => {
+            const entities = resultArr[0].entities;
+            var l = entities.length > 10 ? 10 : entities.length;
+            for(var i = 0; i < l; i++){
+                var entity = entities[i];
                 console.log(entity.name);
                 console.log(entity.type);
                 console.log(entity.salience);
                 console.log(entity.metadata.wikipedia_url);
-            });
+            };
+            console.log("finished a website!");
         });
         return allResults;
         })
