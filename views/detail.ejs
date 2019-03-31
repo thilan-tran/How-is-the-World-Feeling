@@ -31,9 +31,9 @@
     <h2>Articles:</h2>
     <!-- <div class="container"> -->
     <div class="article-container">
-      <% data.forEach(function(element){ %>
+      <% for (var i = 0; i < data.length; i++){ %>
     <div class="dropdown">
-      <button class= "dropbtn"><a href=<%= Object.keys(element) %>><%= Object.values(element)%>...</a></button>
+      <button class= "dropbtn"><a href=<%= Object.keys(data[i]) %>><%= Object.values(data[i])%>...</a></button>
       <div class="dropdown-content">
           <table>
             <tr>
@@ -41,18 +41,17 @@
               <th>Sentiment</th>
               <th>Salience</th>
             </tr>
+            <% for (var j = 0; j < entities[i].length; j++){ %>
             <tr>
-              <td>Bob</td>
-              <td>Yellow</td>
+              <td><%= entities[i][j].name %></td>
+              <td><%= entities[i][j].score %></td>
+              <td><%= entities[i][j].salience %></td>
             </tr>
-            <tr>
-              <td>Michelle</td>
-              <td>Purple</td>
-            </tr>
+            <% } %>
           </table>
       </div>
     </div>
-      <% }) %>
+      <% } %>
     </div>
     <!-- </div> -->
   </body>
