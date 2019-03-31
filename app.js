@@ -43,18 +43,16 @@ router.get("/:p/data/:id", function(req, res) {
       console.log("creating url array");
     });
     
-    console.log("about to start executing axios");
+    console.log("creating analysis arrays");
     axios.all(promises).then(results =>
       { 
         results.forEach(response => {
-        console.log("executing axios");
         const client = new language.LanguageServiceClient();
         const text = cheerio("p", response.data).text();
         const document = {
           content: text,
           type: "PLAIN_TEXT"
         };
-        console.log("creating analysis array");
         sa_promises.push(client.analyzeSentiment({ document: document }));
         e_promises.push(client.analyzeEntities({document}));
         })
@@ -93,12 +91,12 @@ function getStuff(sa_promises) {
 
 function getMoreStuff(e_promises) {
     console.log("about to execute entity analysis");
-    Promise.all(sa_promises).then(allResults => {
-        var total = 0, counter = 0;
-        console.log("performing entity analysis for " + allResults.length);
+    Promise.all(e_promises).then(allResults => {
         console.log(allResults);
+        console.log("performing entity analysis for " + allResults.length);
         allResults.forEach(resultArr => {
             const entities = resultArr.entities;
+            console.log(entities);
             entities.forEach(entity => {
                 console.log(entity.name);
                 console.log(entity.type);
@@ -106,7 +104,6 @@ function getMoreStuff(e_promises) {
                 console.log(entity.metadata.wikipedia_url);
             });
         });
-        console.log("average: "+ total/counter);
         return allResults;
         })
     .catch(err => {
