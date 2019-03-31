@@ -57,12 +57,12 @@ router.get("/:p/data/:id", function(req, res) {
         e_promises.push(client.analyzeEntities({document}));
         se_promises.push(client.analyzeEntitySentiment({document: document}));
         })
-      getStuff(sa_promises);
-      getMoreStuff(e_promises);
-      getEvenMoreStuff(se_promises);
+      var sentiment = getStuff(sa_promises);
+      var entity = getMoreStuff(e_promises);
+      var entitysentiment = getEvenMoreStuff(se_promises);
     });
       
-    res.render("detail", { data: array, loc: LOCATION[req.params.p], l: req.params.p});
+    res.render("detail", { data: array, avg: sentiment, loc: LOCATION[req.params.p], l: req.params.p});
     //console.log(myData);
   });
   //display the specific articles for a trending topic
@@ -92,20 +92,26 @@ function getStuff(sa_promises) {
 
 function getMoreStuff(e_promises) {
     console.log("about to execute entity analysis");
+    var array = [];
     Promise.all(e_promises).then(allResults => {
         console.log("performing entity analysis for " + allResults.length);
         allResults.forEach(resultArr => {
             const entities = resultArr[0].entities;
+            var website = [];
             var l = entities.length > 10 ? 10 : entities.length;
             for(var i = 0; i < l; i++){
                 var entity = entities[i];
                 console.log("Entity name: " + entity.name);
                 console.log("Entity type: " + entity.type);
                 console.log("Entity Salience: " + entity.salience);
+                var myEntity = {name:entity.name, type:entity.type, 
+                    salience:entity.salience};
+                website.push(myEntity);
             };
+            array.push(website);
             console.log("finished a website!");
         });
-        return allResults;
+        return array;
         })
     .catch(err => {
         console.error("ERROR:", err);
@@ -114,10 +120,12 @@ function getMoreStuff(e_promises) {
 
 function getEvenMoreStuff(se_promises) {
     console.log("about to execute sentiment entity analysis");
+    var array = [];
     Promise.all(se_promises).then(allResults => {
         console.log("sentiment entity analysis for " + allResults.length);
         allResults.forEach(resultArr => {
             const entities = resultArr[0].entities;
+            var website = [];
             var l = entities.length > 10 ? 10 : entities.length;
             for(var i = 0; i < l; i++){
                 var entity = entities[i];
@@ -125,14 +133,28 @@ function getEvenMoreStuff(se_promises) {
                 console.log("Entity type: " + entity.type);
                 console.log("Sentiment score: " + entity.sentiment.score);
                 console.log("Sentiment magnitude: "+entity.sentiment.magnitude);
+                var myEntity = {name:entity.name, type:entity.type, 
+                    score:entity.sentiment.score, magnitude:entity.sentiment.magnitude};
+                website.push(myEntity);
             };
+            array.push(website);
             console.log("finished a website!");
         });
-        return allResults;
+        return array;
         })
     .catch(err => {
         console.error("ERROR:", err);
         });
+}
+
+function makeStuffCoherent(entity, entitysentiment){
+    if(entity.length != entitysentiment.length)
+        console.log("oopsies! your arrays are not of the same size.");
+        return;
+    var data = [];
+    for(var i = 0; i < entity.length; i++){
+        
+    }
 }
 
 router.get("/:id?", function(req, res) {
