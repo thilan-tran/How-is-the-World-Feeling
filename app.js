@@ -110,10 +110,10 @@ router.get("/:id?", function(req, res) {
   let myData = null;
   let apiUrl =
     "https://us-central1-vision-migration.cloudfunctions.net/la_hacks_2019?market_code=";
-if(req.params.id != null)
-    apiUrl+=req.params.id;
-else
-    apiUrl+=0;
+    if(req.params.id != null)
+        apiUrl+=req.params.id;
+    else
+        apiUrl+=0;
   axios
     .get(apiUrl)
     .then(response => {
