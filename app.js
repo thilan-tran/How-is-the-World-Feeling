@@ -24,7 +24,8 @@ router.get("/data/:id", function(req, res) {
     response.data.buckets[0].report.rollups[
       req.params.id
     ].top_articles_on_network.forEach(item => {
-      if (array.indexOf(item) == -1) array.push(item);
+      if ( array.findIndex(obj => Object.values(obj).toString() == Object.values(item).toString()) == -1)
+        array.push(item);
     });
 
     promises = [];
