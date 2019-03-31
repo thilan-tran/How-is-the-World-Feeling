@@ -30,10 +30,6 @@ router.get("/:p/data/:id", function(req, res) {
   apiUrl += req.params.p;
   axios.get(apiUrl).then(response => {
     myData = response.data;
-    console.log(response.data);
-    response.data.buckets[0].report.rollups.forEach(item => {
-      console.log(item.name);
-    });
     var array = [];
     response.data.buckets[0].report.rollups[
       req.params.id
@@ -51,12 +47,12 @@ router.get("/:p/data/:id", function(req, res) {
     e_promises = [];
     se_promises = [];
 
+    console.log("creating url array");
     response.data.buckets[0].report.rollups[
       req.params.id
     ].top_articles_on_network.forEach(item => {
       const url = Object.keys(item);
       promises.push(axios.get(url[0]));
-      console.log("creating url array");
     });
 
     console.log("creating analysis arrays");
@@ -72,16 +68,18 @@ router.get("/:p/data/:id", function(req, res) {
         e_promises.push(client.analyzeEntities({ document }));
         se_promises.push(client.analyzeEntitySentiment({ document: document }));
       });
-      var sentiment = getStuff(sa_promises);
+      var sentiment = getStuff(sa_promises, res, 
+          {data:array, loc:LOCATION[req.params.p], l:req.params.p});
       var entity = getMoreStuff(e_promises);
       var entitysentiment = getEvenMoreStuff(se_promises);
-      console.log("Here");
-      res.render("detail", {
+  //    console.log("cleaning up the output");
+//      var data = makeStuffCoherent(entity, entitysentiment);
+      /* res.render("detail", {
         data: array,
         avg: sentiment,
         loc: LOCATION[req.params.p],
         l: req.params.p
-      });
+      }); */
     });
 
     //console.log(myData);
@@ -91,7 +89,7 @@ router.get("/:p/data/:id", function(req, res) {
   //display the result of google cloud analysis of this topic.
 });
 
-function getStuff(sa_promises) {
+function getStuff(sa_promises, res, resObject) {
   console.log("about to execute sa analysis");
   Promise.all(sa_promises)
     .then(allResults => {
@@ -105,8 +103,10 @@ function getStuff(sa_promises) {
         console.log(`Sentiment score: ${sentiment.score}`);
         console.log(`Sentiment magnitude: ${sentiment.magnitude}`);
       });
+      var sentiment = (total/counter).toFixed(3);
       console.log("average: " + total / counter);
-      return allResults;
+      res.render("detail", Object.assign(resObject, { avg: sentiment }));
+      return sentiment;
     })
     .catch(err => {
       console.error("ERROR:", err);
@@ -184,7 +184,18 @@ function makeStuffCoherent(entity, entitysentiment) {
     console.log("oopsies! your arrays are not of the same size.");
   return;
   var data = [];
-  for (var i = 0; i < entity.length; i++) {}
+  for (var i = 0; i < entity.length; i++) {
+    if (entity[i].length != entitysentiment[i].length)
+      console.log("oopsies! your arrays are not of the same size.");
+    var website = [];
+    for (var j = 0; j < entity[i].length; j++){
+      var object = Object.assign(entity[i][j], entitysentiment[i][j]);
+      website.push(object);
+    }
+    data.push(website);
+  }
+  console.log(data.length == entity.length);
+  return data;
 }
 
 router.get("/:id?", function(req, res) {
