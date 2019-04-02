@@ -3,7 +3,7 @@
 ![app preview](https://i.imgur.com/W5MqIQ1.png)
 
 ## Inspiration
-We wanted to make a news app that made it easy to view relevant information about articles and making it accessible to people of all ages.
+We wanted to make a news app that allows users to easily view and access relevant information about trending topics and articles, including an emotional estimate of the topics. 
 
 ## What it does
 The web app lists the top trending topics of the world and allows the user to pick a specific region in the world. They can then view the overall sentiment of these articles and the main entities that are associated to these articles. 
